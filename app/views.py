@@ -1,3 +1,5 @@
+from itertools import product
+from unicodedata import category
 from django.shortcuts import render
 from django.views import View
 from .models import Cart, Customer, Product, OrderPlaced
@@ -11,8 +13,13 @@ class ProductView(View):
      return render(request,'app/home.html',
                    {'Vegetables':Vegetables , 'Fruits':Fruits, 'Grocery':Grocery, 'Dairy':Dairy} )
      
-def product_detail(request):
-  return render(request, 'app/productdetail.html')
+#def product_detail(request):
+ # return render(request, 'app/productdetail.html')
+ 
+class ProductDetailView(View):
+  def get(self, request, pk):
+    product = Product.objects.get(pk=pk)
+    return render(request , 'app/productdetail.html', {'product':product})
       
 def add_to_cart(request):
  return render(request, 'app/addtocart.html')
@@ -43,3 +50,8 @@ def customerregistration(request):
 
 def checkout(request):
  return render(request, 'app/checkout.html')
+
+def vegetables(request , data=None):
+  if data == None:
+    vegetables = Product.objects.filter(category= 'V')
+  return render(request , 'app.vegetables.html', {'Vegetables': vegetables})
