@@ -60,7 +60,7 @@ CATEGORY_CHOICES = (
     ('V','Vegetables'),
     ('F', 'Fruits'),
     ('G','Grocery'),
-    ('D','Dairy')
+    ('D','Dairy'),
     
 )
 class Product(models.Model):

@@ -1,5 +1,3 @@
-from itertools import product
-from unicodedata import category
 from django.shortcuts import render
 from django.views import View
 from .models import Cart, Customer, Product, OrderPlaced
@@ -39,9 +37,6 @@ def orders(request):
 def change_password(request):
  return render(request, 'app/changepassword.html')
 
-def mobile(request):
- return render(request, 'app/mobile.html')
-
 def login(request):
  return render(request, 'app/login.html')
 
@@ -53,5 +48,38 @@ def checkout(request):
 
 def vegetables(request , data=None):
   if data == None:
-    vegetables = Product.objects.filter(category= 'V')
-  return render(request , 'app.vegetables.html', {'Vegetables': vegetables})
+   vegetables = Product.objects.filter(category= 'V')
+  elif data =='below':
+   vegetables = Product.objects.filter(category= 'V').filter(discounted_price__lt=2)
+  elif data =='above':
+   vegetables = Product.objects.filter(category= 'V').filter(discounted_price__gt=2)
+  return render(request , 'app/vegetables.html', {'Vegetables': vegetables})
+
+
+def fruits(request , data=None):
+  if data == None:
+   fruits = Product.objects.filter(category= 'F')
+  elif data =='below':
+   fruits = Product.objects.filter(category= 'F').filter(discounted_price__lt=2)
+  elif data =='above':
+   fruits = Product.objects.filter(category= 'F').filter(discounted_price__gt=2)
+  return render(request , 'app/fruits.html', {'Fruits': fruits}) 
+
+
+def grocery(request , data=None):
+  if data == None:
+   grocery = Product.objects.filter(category= 'G')
+  elif data =='below':
+   grocery = Product.objects.filter(category= 'G').filter(discounted_price__lt=2)
+  elif data =='above':
+   grocery = Product.objects.filter(category= 'G').filter(discounted_price__gt=2)
+  return render(request , 'app/grocery.html', {'Grocery': grocery}) 
+
+def dairy(request , data=None):
+  if data == None:
+   dairy = Product.objects.filter(category= 'D')
+  elif data =='below':
+   dairy = Product.objects.filter(category= 'D').filter(discounted_price__lt=2)
+  elif data =='above':
+   dairy = Product.objects.filter(category= 'D').filter(discounted_price__gt=2)
+  return render(request , 'app/dairy.html', {'Dairy': dairy})
