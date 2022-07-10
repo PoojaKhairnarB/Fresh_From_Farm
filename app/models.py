@@ -1,11 +1,3 @@
-from distutils.command.upload import upload
-from itertools import product
-from pydoc import describe
-from random import choices
-from sre_constants import CATEGORY
-from telnetlib import STATUS
-from turtle import title
-from unicodedata import category
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
