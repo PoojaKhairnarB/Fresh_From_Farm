@@ -6,18 +6,18 @@
  <div class="row">
   <div class="col-sm-3">
    <div class= "list-group">
-       <a href = "{% url 'vegetables' %}" class="list-group-item-action" aria-current="true"> All Vegetables </a>
-       <a href = "{% url 'vegetablesdata' 'below' %}" class="list-group-item-action" aria-current="true"> Vegetables below €2.00  </a>
-       <a href = "{% url 'vegetablesdata' 'above' %}" class="list-group-item-action" aria-current="true">Vegetables above €2.00 </a> 
-
+       <a href = "{% url 'vegetables' %}" class="list-group-item list-group-item-action" aria-current="true"> All Vegetables </a>
+       <a href = "{% url 'vegetablesdata' 'below' %}" class="list-group-item list-group-item-action" aria-current="true"> Vegetables below €2.00  </a>
+       <a href = "{% url 'vegetablesdata' 'above' %}" class="list-group-item list-group-item-action" aria-current="true">Vegetables above €2.00 </a> 
+   </div>
   </div>
-  <div class="col-sm-8 offset-sm-1">
+  <div class="col-sm-8">
     <div class ="row">
         {% for v in Vegetables%}
         <div class= "col-sm-4 text center mb-4">
             <a href = "{% url 'product-detail' v.id %}" class= "btn">
             <div class="item">
-            <img src ="{{v.product_image.url}}" alt="" height="300" class="">
+            <img src ="{{v.product_image.url}}" alt="" height="300" Width="300" class="">
             <div class="fw-bold">{{v.title}}</div>
             <div class="fw-bold"> € {{v.discounted_price}}
                 <small class="fw-light text-decoration-line-through">

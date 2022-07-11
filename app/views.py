@@ -1,9 +1,14 @@
-from itertools import product
+from re import L
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Cart, Customer, Product, OrderPlaced
 from .forms import CustomerRegistrationForm , CustomerProfileForm
 from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 class ProductView(View):
   def get(self, request):
@@ -12,7 +17,7 @@ class ProductView(View):
      Grocery = Product.objects.filter(category='G')
      Dairy = Product.objects.filter(category='D')
      return render(request,'app/home.html',
-                   {'Vegetables':Vegetables , 'Fruits':Fruits, 'Grocery':Grocery, 'Dairy':Dairy} )
+                   {'Vegetables':Vegetables , 'Fruits':Fruits, 'Grocery':Grocery} )
      
 class ProductDetailView(View):
   def get(self, request, pk):
@@ -43,18 +48,85 @@ def show_cart(request):
     else:
       return render(request,'app/emptycart.html')
     
+def plus_cart(request):
+  if request.method == 'GET':
+   prod_id = request.GET['prod_id']
+   c = Cart.objects.get(Q(product=prod_id)& Q(user=request.user))
+   c.quantity+=1
+   c.save()
+   amount = 0.00
+   shipping_amount = 5.00
+   total_amount = 0.0
+   cart_product = [p for p in Cart.objects.all() if p.user==request.user]
+  if cart_product:
+    for p in cart_product:
+        tempamount = (p.quantity * p.product.discounted_price)
+        amount += tempamount
+        total_amount = "{:0.2f}".format(amount + shipping_amount)   
+    data = {
+          'quantity': c.quantity,
+          'amount': amount,
+          'total_amount': amount + shipping_amount,
+        }
+    return JsonResponse(data)
   
-    
+def minus_cart(request):
+  if request.method == 'GET':
+   prod_id = request.GET['prod_id']
+   c = Cart.objects.get(Q(product=prod_id)& Q(user=request.user))
+   c.quantity-=1
+   c.save()
+   amount = 0.00
+   shipping_amount = 5.00
+   total_amount = 0.0
+   cart_product = [p for p in Cart.objects.all() if p.user==request.user]
+  if cart_product:
+    for p in cart_product:
+        tempamount = (p.quantity * p.product.discounted_price)
+        amount += tempamount
+        total_amount = "{:0.2f}".format(amount + shipping_amount) 
+        
+    data = {
+          'quantity': c.quantity,
+          'amount': amount,
+          'total_amount': amount + shipping_amount,
+        }
+    return JsonResponse(data)
+  
+def remove_cart(request):
+  if request.method == 'GET':
+   prod_id = request.GET['prod_id']
+   c = Cart.objects.get(Q(product=prod_id)& Q(user=request.user))
+   c.delete()
+   amount = 0.00
+   shipping_amount = 5.00
+   total_amount = 0.0
+   cart_product = [p for p in Cart.objects.all() if p.user==request.user]
+  if cart_product:
+    for p in cart_product:
+        tempamount = (p.quantity * p.product.discounted_price)
+        amount += tempamount
+        total_amount = "{:0.2f}".format(amount + shipping_amount) 
+        
+    data = {
+          'amount': amount,
+          'total_amount': amount + shipping_amount,
+        }
+    return JsonResponse(data)
+ 
+@login_required    
 def buy_now(request):
  return render(request, 'app/buynow.html')
 
-
+@login_required
 def address(request):
  add = Customer.objects.filter(user=request.user)
  return render(request, 'app/address.html',{'add':add , 'active': 'btn-primary'})
 
+@login_required
 def orders(request):
- return render(request, 'app/orders.html')
+  op = OrderPlaced.objects.filter(user=request.user)
+  return render(request, 'app/orders.html' ,{'order_placed':op})
 
 
 class CustomerRegistrationView(View):
@@ -69,8 +141,34 @@ class CustomerRegistrationView(View):
       form.save()
     return render(request, 'app/customerregistration.html', {'form':form})
 
+@login_required
 def checkout(request):
- return render(request, 'app/checkout.html')
+  user = request.user
+  add = Customer.objects.filter(user=user)
+  cart_items = Cart.objects.filter(user=user)
+  amount = 0.00
+  shipping_amount = 5.00
+  total_amount = 0.0
+  cart_product = [p for p in Cart.objects.all() if p.user==request.user]
+  if cart_product:
+    for p in cart_product:
+        tempamount = (p.quantity * p.product.discounted_price)
+        amount += tempamount
+    total_amount = "{:0.2f}".format(amount + shipping_amount) 
+        
+  return render (request, 'app/checkout.html', {'add': add , 'total_amount': total_amount , 'cart_items':cart_items})
+
+@login_required
+def payment_done(request):
+  user = request.user
+  custid = request.GET.get('custid')
+  customer= Customer.objects.get(id=custid)
+  cart = Cart.objects.filter(user=user)
+  for c in cart:
+    OrderPlaced(user=user, customer=customer, product=c.product, quantity =c.quantity).save()
+    c.delete()
+  return redirect("orders")
+
 
 def vegetables(request , data=None):
   if data == None:
@@ -111,6 +209,7 @@ def dairy(request , data=None):
   return render(request , 'app/dairy.html', {'Dairy': dairy})
 
 
+@method_decorator(login_required , name='dispatch')
 class ProfileView(View):
   def get(self, request):
     form =CustomerProfileForm
