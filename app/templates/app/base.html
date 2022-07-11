@@ -74,8 +74,17 @@
              <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a>
             </li>
           {% endif %}
-          </ul>
-         </div>
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="CategoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             About us
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="CategoryDropdown">
+              <li><a class="dropdown-item" href="{% url 'vegetables' %}">About Us</a></li>
+              <li><a class="dropdown-item" href="{% url 'fruits' %}">Support</a></li>
+            </ul>
+          </li>
        </div>
      </div>
     </nav>
