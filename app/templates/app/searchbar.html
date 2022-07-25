@@ -1,0 +1,19 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Checkout{% endblock title %}
+{% block main-content %}
+
+{% if search %}
+  <center><h3> Search result found for {{search}}</h3>
+  <br/>
+  {% for product in products  %}
+      <a href = "{% url 'product-detail' product.id%}"">{{ product.title }} <br/>
+  
+  {% endfor %}
+  </center>
+ {% else %}
+ <center><h1> Nothing found </h1></center>
+{% endif %}
+
+{% endblock main-content %}
+
