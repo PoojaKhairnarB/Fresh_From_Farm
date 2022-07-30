@@ -1,19 +1,25 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block title %}Checkout{% endblock title %}
+{% block title %}Searchbar{% endblock title %}
 {% block main-content %}
 
-{% if search %}
-  <center><h3> Search result found for {{search}}</h3>
-  <br/>
-  {% for product in products  %}
-      <a href = "{% url 'product-detail' product.id%}"">{{ product.title }} <br/>
+<center>
+{% if searched %}
+    <h1> Search result found for {{ searched }}</h1>
+    </br>
+    <div>
+    {% for product in products %}
+      <div>
+        <img src="{{product.product_image.url}}" alt="" height="200px">
+      </div>
+      <a href = "{% url 'product-detail' product.id %} "> <div class="item"><span class="fw-bold">{{product.title}} </span><br><span class="fs-5">€{{product.discounted_price}}</span></div></a>
+      </br>
+      {% endfor %}
+     </div>
   
-  {% endfor %}
-  </center>
- {% else %}
- <center><h1> Nothing found </h1></center>
+{% else %}
+<h1> Nothing to Search</h1>
+
 {% endif %}
-
+</center>
 {% endblock main-content %}
-

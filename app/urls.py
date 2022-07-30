@@ -32,7 +32,7 @@ urlpatterns = [
     path('grocery/', views.grocery, name='grocery'),
     path('grocery/ <slug:data>', views.grocery, name='grocerydata'),
     
-    path ('accounts/login/', auth_views.LoginView.as_view(template_name ='app/login.html', authentication_form=LoginForm), name='login'),
+    path ('accounts/login/', auth_views.LoginView.as_view(template_name ='app/login.html', authentication_form=LoginForm, next_page = 'home'), name='login'),
     
     path ('logout/', auth_views.LogoutView.as_view(next_page = 'login'), name='logout'),
 
@@ -49,6 +49,12 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     
     path('paymentdone/', views.payment_done, name='paymentdone'),
+    
+    path('searchbar/', views.searchbar, name='searchbar'),
+    
+    path('aboutus/', views.aboutus, name='aboutus'),
+    path('support/', views.support, name='support'),
+    
     
     
 ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)

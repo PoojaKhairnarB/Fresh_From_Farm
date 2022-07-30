@@ -1,4 +1,3 @@
-from re import L
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
@@ -228,3 +227,20 @@ class ProfileView(View):
       reg.save()
       messages.success(request, 'Profile Updated Successfully!!')
     return render(request,'app/profile.html', {'form':form , 'active': 'btn-primary'})
+
+
+def searchbar(request):
+  if request.method == "POST":
+    searched = request.POST['searched']
+    products = Product.objects.filter(title__contains=searched)
+    return render(request, 'app/searchbar.html' ,{'searched':searched , 'products':products})
+  else:
+    return render(request, 'app/searchbar.html' ,{'searched':searched})
+  
+
+def aboutus(request):
+ return render(request, 'app/aboutus.html')
+
+
+def support(request):
+ return render(request, 'app/support.html')
